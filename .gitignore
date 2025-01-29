@@ -1,1 +1,4 @@
 /.venv
+
+# Local configuration
+local_paths.py

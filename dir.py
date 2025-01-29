@@ -1,5 +1,9 @@
 class Dir:
+    # Default relative paths
+    TRAIN_DIR = "./data/Training"
+    TEST_DIR = "./data/Testing"
 
-    # Dataset paths
-    TRAIN_DIR = "C:/Users/khila/Downloads/archive/Training"
-    TEST_DIR = "C:/Users/khila/Downloads/archive/Testing"
+    try:
+        from .local_paths import TRAIN_DIR, TEST_DIR  # Import specific paths
+    except ImportError:
+        pass
