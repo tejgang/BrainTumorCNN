@@ -1,4 +1,5 @@
 from config import Config
+from dir import Dir
 import tensorflow as tf
 
 def load_data():

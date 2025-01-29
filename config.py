@@ -1,9 +1,4 @@
 class Config:
-
-    # Dataset paths
-    TRAIN_DIR = "C:/Users/khila/Downloads/archive/Training"
-    TEST_DIR = "C:/Users/khila/Downloads/archive/Testing"
-        
     # Model hyperparameters
     IMAGE_SIZE = (224, 224)
     BATCH_SIZE = 32

@@ -1,5 +1,6 @@
 import tensorflow as tf
 from config import Config
+from dir import Dir
 
 def build_model():
     model = tf.keras.Sequential([
