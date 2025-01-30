@@ -1,4 +1,65 @@
-/.venv
-
-# Local configuration
+# Local paths and sensitive data
 local_paths.py
+
+# Python
+__pycache__/
+*/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+*.so
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+ENV/
+.env
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Model files and outputs
+/saved_models/
+/saved_models/*
+saved_models/model.h5
+*.h5
+*.hdf5
+*.pkl
+*.pth
+
+# Data and results
+data/
+Training_plots/
+Confusion_Matrix/
+*.png
+*.jpg
+*.jpeg
+*.csv
+*.json
+
+# Logs
+logs/
+*.log
+tensorboard_logs/

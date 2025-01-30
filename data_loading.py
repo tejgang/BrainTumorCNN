@@ -19,6 +19,10 @@ def load_data():
         class_mode='categorical',
         subset='training'
     )
+    train_generator = tf.data.Dataset.from_generator(
+        lambda: train_generator,
+        output_types=(tf.float32, tf.float32)
+    ).prefetch(tf.data.AUTOTUNE).cache()
 
     val_generator = train_datagen.flow_from_directory(
         Dir.TRAIN_DIR,
@@ -27,6 +31,10 @@ def load_data():
         class_mode='categorical',
         subset='validation'
     )
+    val_generator = tf.data.Dataset.from_generator(
+        lambda: val_generator,
+        output_types=(tf.float32, tf.float32)
+    ).prefetch(tf.data.AUTOTUNE).cache()
 
     # Test data (no augmentation)
     test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)

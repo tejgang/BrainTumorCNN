@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import tensorflow as tf
 from data_loading import load_data
-from config import Config
+from dir import Dir
 from visual import plot_confusion_matrix
 
 def evaluate_model():
 
     # Load data and model
     _, _, test_generator = load_data()
-    model = tf.keras.models.load_model(Config.MODEL_SAVE_PATH)
+    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
 
     # Evaluate on test data
     loss, accuracy = model.evaluate(test_generator)
@@ -32,7 +32,7 @@ def evaluate_model():
     plot_confusion_matrix(cm, test_generator.class_indices)
 
     # Save plots
-    plt.savefig(Config.CONFUSION_MATRIX_SAVE_PATH)
+    plt.savefig(Dir.CONFUSION_MATRIX_SAVE_PATH)
     plt.close()
 
 if __name__ == "__main__":
