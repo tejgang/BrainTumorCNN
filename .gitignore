@@ -3,8 +3,12 @@ local_paths.py
 
 # Python
 __pycache__/
-*/__pycache__/
-*.pyc
+**/__pycache__/
+*.py[cod]
+**/*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
 *.pyo
 *.pyd
 .Python
