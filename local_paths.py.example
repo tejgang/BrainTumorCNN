@@ -1,3 +1,0 @@
-# Example local paths - modify and rename to local_paths.py
-TRAIN_DIR = "/path/to/your/training/data"
-TEST_DIR = "/path/to/your/testing/data" 

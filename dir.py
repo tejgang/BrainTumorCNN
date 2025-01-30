@@ -1,9 +1,6 @@
+from local_paths import train_dir, test_dir
+
 class Dir:
     # Default relative paths
-    TRAIN_DIR = "./data/Training"
-    TEST_DIR = "./data/Testing"
-
-    try:
-        from .local_paths import TRAIN_DIR, TEST_DIR  # Import specific paths
-    except ImportError:
-        pass
+    TRAIN_DIR = train_dir
+    TEST_DIR = test_dir
