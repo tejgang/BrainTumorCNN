@@ -1,10 +1,9 @@
 class Config:
-    # Model hyperparameters
-    IMAGE_SIZE = (224, 224)
-    BATCH_SIZE = 32
-    EPOCHS = 20
-    NUM_CLASSES = 4  # 3 tumor types + no tumor
-        
-    # Save paths
-    MODEL_SAVE_PATH = "saved_model/brain_tumor_model.h5"
-    PLOT_SAVE_PATH = "results/training_plot.png"
+    # Model training parameters
+    BATCH_SIZE = 64  
+    IMAGE_SIZE = (256, 256)  
+    EPOCHS = 50  
+
+    # Paths for saving outputs
+    MODEL_SAVE_PATH = './saved_models/model.h5'
+    PLOT_SAVE_PATH = './plots/training_history.png'

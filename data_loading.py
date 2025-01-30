@@ -13,7 +13,7 @@ def load_data():
     )
 
     train_generator = train_datagen.flow_from_directory(
-        Config.TRAIN_DIR,
+        Dir.TRAIN_DIR,
         target_size=Config.IMAGE_SIZE,
         batch_size=Config.BATCH_SIZE,
         class_mode='categorical',
@@ -21,7 +21,7 @@ def load_data():
     )
 
     val_generator = train_datagen.flow_from_directory(
-        Config.TRAIN_DIR,
+        Dir.TRAIN_DIR,
         target_size=Config.IMAGE_SIZE,
         batch_size=Config.BATCH_SIZE,
         class_mode='categorical',
@@ -32,7 +32,7 @@ def load_data():
     test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
 
     test_generator = test_datagen.flow_from_directory(
-        Config.TEST_DIR,
+        Dir.TEST_DIR,
         target_size=Config.IMAGE_SIZE,
         batch_size=Config.BATCH_SIZE,
         class_mode='categorical',
