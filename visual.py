@@ -1,7 +1,12 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+from dir import Dir
 
 def plot_training_history(history, save_path):
+    # Create directory if it doesn't exist
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    
     plt.figure(figsize=(12, 4))
     
     # Plot accuracy
@@ -18,10 +23,19 @@ def plot_training_history(history, save_path):
     plt.title('Loss')
     plt.legend()
     
-    plt.savefig(save_path)
-    plt.close()
+    # Save with full path and ensure directory exists
+    try:
+        plt.savefig(save_path)
+        print(f"Training plots saved to: {save_path}")
+    except Exception as e:
+        print(f"Error saving plot: {e}")
+    finally:
+        plt.close()
 
 def plot_confusion_matrix(cm, class_indices):
+    # Create directory if it doesn't exist
+    os.makedirs(os.path.dirname(Dir.CONFUSION_MATRIX_SAVE_PATH), exist_ok=True)
+    
     plt.figure(figsize=(10, 8))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
                 xticklabels=class_indices.keys(), 
@@ -29,5 +43,11 @@ def plot_confusion_matrix(cm, class_indices):
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')
-    plt.savefig('results/confusion_matrix.png')
-    plt.close()
+    
+    try:
+        plt.savefig(Dir.CONFUSION_MATRIX_SAVE_PATH)
+        print(f"Confusion matrix saved to: {Dir.CONFUSION_MATRIX_SAVE_PATH}")
+    except Exception as e:
+        print(f"Error saving confusion matrix: {e}")
+    finally:
+        plt.close()
