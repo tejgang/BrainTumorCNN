@@ -49,7 +49,7 @@ def train_model():
             min_lr=1e-6
         ),
         tf.keras.callbacks.ModelCheckpoint(
-            Dir.MODEL_SAVE_PATH,
+            Dir.MODEL_SAVE_PATH.replace('.h5', '.keras'),
             monitor='val_accuracy',
             save_best_only=True,
             mode='max'

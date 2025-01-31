@@ -5,9 +5,15 @@ from dir import Dir
 from visual import generate_confusion_matrix
 
 def evaluate_model():
-    # Load data and model
+    # Load data and model (using .keras format)
     _, _, test_generator = load_data()
-    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
+    try:
+        model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
+    except:
+        # Fallback to old path if needed
+        old_path = Dir.MODEL_SAVE_PATH.replace('.keras', '.h5')
+        model = tf.keras.models.load_model(old_path)
+        print(f"Loaded model from old format: {old_path}")
 
     # Get predictions
     predictions = model.predict(test_generator)

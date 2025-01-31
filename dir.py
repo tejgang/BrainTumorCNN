@@ -7,6 +7,6 @@ class Dir:
     TEST_DIR = test_dir
 
     # Saved models and plots
-    MODEL_SAVE_PATH = './saved_models/model.h5'
+    MODEL_SAVE_PATH = './saved_models/model.keras'
     PLOT_SAVE_PATH = training_plots_dir
     CONFUSION_MATRIX_SAVE_PATH = confusion_matrix_dir
