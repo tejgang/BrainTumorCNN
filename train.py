@@ -14,16 +14,17 @@ def train_model():
     train_generator, validation_generator, _ = load_data()
     model = build_model()
     
-    # Learning rate schedule
+    # Learning rate schedule with proper initial learning rate
     initial_learning_rate = Config.LEARNING_RATE
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate,
         decay_steps=1000,
-        decay_rate=0.9
+        decay_rate=0.9,
+        staircase=True
     )
     
     # Optimizer with learning rate schedule
-    optimizer = tf.keras.optimizers.Adam(learning_rate=lr_schedule)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=Config.LEARNING_RATE)  # Use fixed learning rate
     
     # Compile with weighted loss
     model.compile(
@@ -58,10 +59,10 @@ def train_model():
     
     # Train with class weights
     class_weights = {
-        0: 1.0,  # Adjust based on your class distribution
-        1: 2.0,
-        2: 2.0,
-        3: 2.0
+        0: 1.0,  # No Tumor
+        1: 2.0,  # Glioma
+        2: 2.0,  # Meningioma
+        3: 2.0   # Pituitary
     }
     
     history = model.fit(
@@ -69,9 +70,7 @@ def train_model():
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights,
-        workers=4,
-        use_multiprocessing=True
+        class_weight=class_weights
     )
 
     # Save training plots
