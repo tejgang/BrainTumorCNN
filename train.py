@@ -39,17 +39,17 @@ def train_model():
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
-            patience=10,
+            patience=Config.EARLY_STOPPING_PATIENCE,
             restore_best_weights=True
         ),
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor='val_loss',
-            factor=0.2,
-            patience=5,
+            factor=Config.REDUCE_LR_FACTOR,
+            patience=Config.REDUCE_LR_PATIENCE,
             min_lr=1e-6
         ),
         tf.keras.callbacks.ModelCheckpoint(
-            Dir.MODEL_SAVE_PATH.replace('.h5', '.keras'),
+            Dir.MODEL_SAVE_PATH,
             monitor='val_accuracy',
             save_best_only=True,
             mode='max'
@@ -69,7 +69,9 @@ def train_model():
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights
+        class_weight=class_weights,
+        workers=4,
+        use_multiprocessing=True
     )
 
     # Save training plots
