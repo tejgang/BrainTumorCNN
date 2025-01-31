@@ -4,6 +4,8 @@ from visual import plot_training_history
 from config import Config
 from dir import Dir
 import tensorflow as tf
+import numpy as np
+from sklearn.utils.class_weight import compute_class_weight
 
 
 def train_model():
@@ -14,21 +16,12 @@ def train_model():
     train_generator, validation_generator, _ = load_data()
     model = build_model()
     
-    # Learning rate schedule with proper initial learning rate
-    initial_learning_rate = Config.LEARNING_RATE
-    lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-        initial_learning_rate,
-        decay_steps=1000,
-        decay_rate=0.9,
-        staircase=True
-    )
-    
-    # Optimizer with learning rate schedule
-    optimizer = tf.keras.optimizers.Adam(learning_rate=Config.LEARNING_RATE)  # Use fixed learning rate
-    
-    # Compile with weighted loss
+    # Two-phase training: first frozen, then fine-tuning
+    # Phase 1: Training with frozen base
+    base_model = model.layers[0]
+    base_model.trainable = False
     model.compile(
-        optimizer=optimizer,
+        optimizer=tf.keras.optimizers.Adam(learning_rate=Config.LEARNING_RATE * 10),
         loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
         metrics=['accuracy', 
                 tf.keras.metrics.AUC(),
@@ -41,36 +34,43 @@ def train_model():
         tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
             patience=Config.EARLY_STOPPING_PATIENCE,
-            restore_best_weights=True
+            restore_best_weights=True,
+            verbose=1
         ),
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor='val_loss',
             factor=Config.REDUCE_LR_FACTOR,
             patience=Config.REDUCE_LR_PATIENCE,
-            min_lr=1e-6
+            min_lr=1e-7,
+            verbose=1
         ),
         tf.keras.callbacks.ModelCheckpoint(
             Dir.MODEL_SAVE_PATH,
             monitor='val_accuracy',
-            save_best_only=True,
-            mode='max'
+            save_best_weights_only=True,
+            mode='max',
+            verbose=1
         )
     ]
     
-    # Train with class weights
-    class_weights = {
-        0: 1.0,  # No Tumor
-        1: 2.0,  # Glioma
-        2: 2.0,  # Meningioma
-        3: 2.0   # Pituitary
-    }
+    # Calculate class weights from training data
+    y_true = train_generator.classes
+    class_weights = compute_class_weight(
+        class_weight='balanced',
+        classes=np.unique(y_true),
+        y=y_true
+    )
+    class_weight_dict = dict(enumerate(class_weights))
     
+    # Train with computed class weights
     history = model.fit(
         train_generator,
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights
+        class_weight=class_weight_dict,
+        workers=4,
+        use_multiprocessing=True
     )
 
     # Save training plots
