@@ -5,32 +5,44 @@ from dir import Dir
 from visual import generate_confusion_matrix
 
 def evaluate_model():
-    # Load data and model (using .keras format)
+    # Load data and model
     _, _, test_generator = load_data()
-    try:
-        model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
-    except:
-        # Fallback to old path if needed
-        old_path = Dir.MODEL_SAVE_PATH.replace('.keras', '.h5')
-        model = tf.keras.models.load_model(old_path)
-        print(f"Loaded model from old format: {old_path}")
+    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
 
-    # Get predictions
-    predictions = model.predict(test_generator)
+    # Calculate steps as integer
+    steps = int(np.ceil(test_generator.samples / test_generator.batch_size))
+    
+    print("Starting evaluation...")
+    
+    # Get predictions with steps
+    predictions = model.predict(
+        test_generator,
+        steps=steps,
+        verbose=1
+    )
     y_pred = np.argmax(predictions, axis=1)
     
-    # Get true labels
-    y_true = []
-    for _, labels in test_generator:
-        y_true.extend(np.argmax(labels, axis=1))
-    y_true = np.array(y_true[:len(y_pred)])  # Match lengths
+    # Reset generator
+    test_generator.reset()
     
-    # Evaluate model
-    loss, accuracy = model.evaluate(test_generator)
-    print(f"Test Loss: {loss:.4f}")
-    print(f"Test Accuracy: {accuracy:.4f}")
+    # Get true labels
+    y_true = test_generator.classes[:len(y_pred)]
+    
+    # Evaluate model with steps
+    print("\nCalculating metrics...")
+    metrics = model.evaluate(
+        test_generator,
+        steps=steps,
+        verbose=1
+    )
+    
+    # Print all metrics
+    metric_names = ['loss', 'accuracy', 'auc', 'precision', 'recall']
+    for name, value in zip(metric_names, metrics):
+        print(f"\nTest {name.capitalize()}: {value:.4f}")
 
     # Generate and save confusion matrix
+    print("\nGenerating confusion matrix...")
     generate_confusion_matrix(y_true, y_pred, Dir.CONFUSION_MATRIX_SAVE_PATH)
 
 if __name__ == "__main__":
