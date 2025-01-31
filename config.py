@@ -1,13 +1,13 @@
 class Config:
     # Model training parameters
-    IMAGE_SIZE = (224, 224)
-    BATCH_SIZE = 32
-    EPOCHS = 50               # Increased epochs with early stopping
-    LEARNING_RATE = 1e-5     # Lower learning rate for fine-tuning
+    IMAGE_SIZE = (224, 224)  # Reduced for speed
+    BATCH_SIZE = 64         # Increased for speed
+    EPOCHS = 50
+    LEARNING_RATE = 1e-5
     NUM_CLASSES = 4
     
     # Early stopping parameters
-    EARLY_STOPPING_PATIENCE = 10  # Increased patience
+    EARLY_STOPPING_PATIENCE = 10
     REDUCE_LR_PATIENCE = 5
     REDUCE_LR_FACTOR = 0.2
     
@@ -17,7 +17,13 @@ class Config:
     
     # Model parameters
     DROPOUT_RATE = 0.5
-    L2_LAMBDA = 0.01        # L2 regularization factor
+    L2_LAMBDA = 0.01
+    
+    # Performance optimization
+    MIXED_PRECISION = True
+    NUM_WORKERS = 4
+    USE_MULTIPROCESSING = True
+    MAX_QUEUE_SIZE = 10
     
    
     

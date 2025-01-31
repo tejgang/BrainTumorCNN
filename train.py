@@ -10,11 +10,16 @@ from sklearn.utils.class_weight import compute_class_weight
 
 def train_model():
     # Enable mixed precision for faster training
-    tf.keras.mixed_precision.set_global_policy('mixed_float16')
+    if Config.MIXED_PRECISION:
+        tf.keras.mixed_precision.set_global_policy('mixed_float16')
     
     # Load data and model
     train_generator, validation_generator, _ = load_data()
     model = build_model()
+    
+    # Calculate steps
+    steps_per_epoch = train_generator.samples // Config.BATCH_SIZE
+    validation_steps = validation_generator.samples // Config.BATCH_SIZE
     
     # Two-phase training: first frozen, then fine-tuning
     # Phase 1: Training with frozen base
@@ -47,7 +52,7 @@ def train_model():
         tf.keras.callbacks.ModelCheckpoint(
             Dir.MODEL_SAVE_PATH,
             monitor='val_accuracy',
-            save_best_only=True,
+            save_best_weights_only=True,
             mode='max',
             verbose=1
         )
@@ -62,15 +67,18 @@ def train_model():
     )
     class_weight_dict = dict(enumerate(class_weights))
     
-    # Train with computed class weights
+    # Train with optimized parameters
     history = model.fit(
         train_generator,
         epochs=Config.EPOCHS,
+        steps_per_epoch=steps_per_epoch,
         validation_data=validation_generator,
+        validation_steps=validation_steps,
         callbacks=callbacks,
         class_weight=class_weight_dict,
-        workers=4,
-        use_multiprocessing=True
+        workers=Config.NUM_WORKERS,
+        use_multiprocessing=Config.USE_MULTIPROCESSING,
+        max_queue_size=Config.MAX_QUEUE_SIZE
     )
 
     # Save training plots
