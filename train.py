@@ -47,7 +47,7 @@ def train_model():
         tf.keras.callbacks.ModelCheckpoint(
             Dir.MODEL_SAVE_PATH,
             monitor='val_accuracy',
-            save_best_weights_only=True,
+            save_best_only=True,
             mode='max',
             verbose=1
         )
