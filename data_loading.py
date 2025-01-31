@@ -7,10 +7,14 @@ def load_data():
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
         validation_split=0.2,  
-        rotation_range=20,
+        rotation_range=30,
         width_shift_range=0.2,
         height_shift_range=0.2,
-        horizontal_flip=True
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        fill_mode='nearest',
+        brightness_range=[0.8,1.2]
     )
 
     # Load training and validation data
