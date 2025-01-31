@@ -29,9 +29,9 @@ class Config:
     
     # Performance optimization
     MIXED_PRECISION = True
-    NUM_WORKERS = 4
     USE_MULTIPROCESSING = True
     MAX_QUEUE_SIZE = 10
+    NUM_WORKERS = 4
     
    
     

@@ -4,17 +4,20 @@ from visual import plot_training_history
 from config import Config
 from dir import Dir
 import tensorflow as tf
-import numpy as np
-from sklearn.utils.class_weight import compute_class_weight
 
-
+# Focal loss function
 def focal_loss(gamma=2., alpha=.25):
+
     def focal_loss_fixed(y_true, y_pred):
+
         pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
         return -tf.reduce_mean(alpha * tf.pow(1. - pt_1, gamma) * tf.math.log(pt_1 + tf.keras.backend.epsilon()))
+    
     return focal_loss_fixed
 
+
 def train_model():
+
     # Enable mixed precision for faster training
     if Config.MIXED_PRECISION:
         tf.keras.mixed_precision.set_global_policy('mixed_float16')
@@ -61,7 +64,7 @@ def train_model():
         )
     ]
     
-    # Train with optimized parameters (removed workers and multiprocessing)
+    # Train with optimized parameters 
     history = model.fit(
         train_generator,
         epochs=Config.EPOCHS,
