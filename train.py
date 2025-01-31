@@ -69,9 +69,7 @@ def train_model():
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=class_weights,
-        workers=4,
-        use_multiprocessing=True
+        class_weight=class_weights
     )
 
     # Save training plots
