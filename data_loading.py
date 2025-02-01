@@ -7,14 +7,14 @@ def load_data():
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
         validation_split=0.2,
-        rotation_range=40,        # Increased rotation
-        width_shift_range=0.3,    # Increased shift
+        rotation_range=40,        
+        width_shift_range=0.3,    
         height_shift_range=0.3,
         shear_range=0.2,
-        zoom_range=0.3,          # Increased zoom
+        zoom_range=0.3,          
         horizontal_flip=True,
-        vertical_flip=True,      # Added vertical flip
-        brightness_range=[0.7,1.3],  # Increased brightness range
+        vertical_flip=True,      
+        brightness_range=[0.7,1.3],  
         preprocessing_function=tf.keras.applications.resnet50.preprocess_input
     )
 

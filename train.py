@@ -38,28 +38,28 @@ def train_model():
         loss=focal_loss(gamma=2.0),
         # Multiple metrics for comprehensive model evaluation
         metrics=['accuracy',  # Standard accuracy
-                tf.keras.metrics.AUC(name='auc'),  # Area Under ROC Curve
-                tf.keras.metrics.Precision(name='precision'),  # True positives / (True + False positives)
-                tf.keras.metrics.Recall(name='recall'),  # True positives / (True + False negatives)
-                tf.keras.metrics.F1Score(average='macro', name='f1_macro')]  # Harmonic mean of precision and recall
+                tf.keras.metrics.AUC(name='auc'),  
+                tf.keras.metrics.Precision(name='precision'), 
+                tf.keras.metrics.Recall(name='recall'),  
+                tf.keras.metrics.F1Score(average='macro', name='f1_macro')]  
     )
     
     # Training callbacks for optimization and monitoring
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_f1_macro',  # Monitor macro-averaged F1 score
-            patience=Config.EARLY_STOPPING_PATIENCE,  # Number of epochs to wait for improvement
-            restore_best_weights=True,  # Restore model to best performance
-            mode='max',  # Higher F1 is better
+            monitor='val_f1_macro', 
+            patience=Config.EARLY_STOPPING_PATIENCE,  
+            restore_best_weights=True,  
+            mode='max',  
             verbose=1
         ),
         # Learning Rate Reduction: Adapts learning rate when training plateaus
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor='val_f1_macro',
-            factor=Config.REDUCE_LR_FACTOR,  # Factor to reduce learning rate by
-            patience=Config.REDUCE_LR_PATIENCE,  # Epochs to wait before reduction
-            min_lr=1e-8,  # Minimum learning rate
+            factor=Config.REDUCE_LR_FACTOR,  
+            patience=Config.REDUCE_LR_PATIENCE,  
+            min_lr=1e-8,  
             mode='max',
             verbose=1
         ),
@@ -67,7 +67,7 @@ def train_model():
         tf.keras.callbacks.ModelCheckpoint(
             filepath=Dir.MODEL_SAVE_PATH,
             monitor='val_f1_macro',
-            save_best_only=True,  # Only save when model improves
+            save_best_only=True,  
             mode='max',
             verbose=1
         )
@@ -79,7 +79,7 @@ def train_model():
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=Config.CLASS_WEIGHTS  # Apply class weights to handle imbalance
+        class_weight=Config.CLASS_WEIGHTS  
     )
 
     # Visualize and save training progress

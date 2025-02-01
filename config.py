@@ -1,9 +1,9 @@
 class Config:
     # Model training parameters
-    IMAGE_SIZE = (224, 224)  # Keep full resolution for better feature detection
-    BATCH_SIZE = 32         # Smaller batch size for better generalization
+    IMAGE_SIZE = (224, 224)  
+    BATCH_SIZE = 32         
     EPOCHS = 100           
-    LEARNING_RATE = 2e-5    # Slightly increased for better exploration
+    LEARNING_RATE = 2e-5    
     NUM_CLASSES = 4
     
     # Class weights (adjusted based on confusion matrix)
@@ -15,17 +15,17 @@ class Config:
     }
     
     # Early stopping parameters
-    EARLY_STOPPING_PATIENCE = 12    # Increased to allow more training
-    REDUCE_LR_PATIENCE = 6         # Adjusted accordingly
-    REDUCE_LR_FACTOR = 0.15        # More gradual learning rate reduction
+    EARLY_STOPPING_PATIENCE = 12    
+    REDUCE_LR_PATIENCE = 6         
+    REDUCE_LR_FACTOR = 0.15        
     
     # Data augmentation parameters
     VALIDATION_SPLIT = 0.2
     TEST_SPLIT = 0.1
     
     # Model parameters
-    DROPOUT_RATE = 0.65           # Increased to combat overfitting
-    L2_LAMBDA = 0.002            # Increased regularization
+    DROPOUT_RATE = 0.65           
+    L2_LAMBDA = 0.002           
     
     # Performance optimization
     MIXED_PRECISION = True
