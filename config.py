@@ -15,7 +15,7 @@ class Config:
     }
     
     # Early stopping parameters
-    EARLY_STOPPING_PATIENCE = 6    
+    EARLY_STOPPING_PATIENCE = 5    
     REDUCE_LR_PATIENCE = 3         
     REDUCE_LR_FACTOR = 0.15        
     

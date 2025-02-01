@@ -3,11 +3,17 @@ import tensorflow as tf
 from data_loading import load_data
 from dir import Dir
 from visual import generate_confusion_matrix
+from train import focal_loss  # Import the focal loss function
 
 def evaluate_model():
     # Load data and model
     _, _, test_generator = load_data()
-    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
+    
+    # Load model with custom loss
+    custom_objects = {
+        'focal_loss_fixed': focal_loss()
+    }
+    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH, custom_objects=custom_objects)
 
     # Calculate steps as integer
     steps = int(np.ceil(test_generator.samples / test_generator.batch_size))
