@@ -21,6 +21,11 @@ def focal_loss(gamma=2., alpha=.25):
     return focal_loss_fixed
 
 def train_model():
+
+
+    tf.profiler.experimental.start('logdir')
+    # Enable XLA compilation
+    tf.config.optimizer.set_jit(True)
     # Enable mixed precision training for better memory efficiency and speed
     # Uses float16 for certain operations while maintaining float32 for critical ones
     if Config.MIXED_PRECISION:
@@ -37,13 +42,12 @@ def train_model():
         # Focal loss for handling class imbalance
         loss=focal_loss(gamma=2.0),
         # Multiple metrics for comprehensive model evaluation
-        metrics=['accuracy',  # Standard accuracy
-                tf.keras.metrics.AUC(name='auc'),  
-                tf.keras.metrics.Precision(name='precision'), 
-                tf.keras.metrics.Recall(name='recall'),  
-                tf.keras.metrics.F1Score(average='macro', name='f1_macro')]  
+        metrics=['accuracy', tf.keras.metrics.AUC(name='auc'), 
+                 tf.keras.metrics.F1Score(average='macro', name='f1_macro')]
     )
     
+
+
     # Training callbacks for optimization and monitoring
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
@@ -84,6 +88,8 @@ def train_model():
 
     # Visualize and save training progress
     plot_training_history(history, Dir.PLOT_SAVE_PATH)
+
+    tf.profiler.experimental.stop()
 
 if __name__ == "__main__":
     train_model()

@@ -3,6 +3,33 @@ from dir import Dir
 import tensorflow as tf
 
 def load_data():
+
+    def _load_dataset(directory, subset=None, augment=False):
+        ds = tf.keras.utils.image_dataset_from_directory(
+            directory,
+            image_size=Config.IMAGE_SIZE,
+            batch_size=Config.BATCH_SIZE,
+            validation_split=Config.VALIDATION_SPLIT if subset else None,
+            subset=subset,
+            seed=42
+        ).map(lambda x, y: (tf.keras.applications.resnet50.preprocess_input(x), y),
+              num_parallel_calls=tf.data.AUTOTUNE)
+        
+        if augment:
+            ds = ds.map(lambda x, y: (tf.image.random_flip_left_right(x), y), 
+                        num_parallel_calls=tf.data.AUTOTUNE)
+            ds = ds.map(lambda x, y: (tf.image.random_rotation(x, 0.3), y), 
+                        num_parallel_calls=tf.data.AUTOTUNE)
+        
+        return ds.prefetch(tf.data.AUTOTUNE).cache()
+
+    train_ds = _load_dataset(Dir.TRAIN_DIR, subset='training', augment=True)
+    val_ds = _load_dataset(Dir.TRAIN_DIR, subset='validation')
+    test_ds = _load_dataset(Dir.TEST_DIR)
+    
+    return train_ds, val_ds, test_ds
+    '''
+    
     # Enhanced data augmentation for training
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
@@ -47,3 +74,4 @@ def load_data():
     )
 
     return train_generator, validation_generator, test_generator
+    '''
