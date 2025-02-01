@@ -3,7 +3,7 @@ import tensorflow as tf
 from data_loading import load_data
 from dir import Dir
 from visual import generate_confusion_matrix
-from train import focal_loss  # Import the focal loss function
+from train import focal_loss  
 
 def evaluate_model():
     # Load data and model
