@@ -18,10 +18,9 @@ def focal_loss(gamma=2., alpha=.25):
 
 def train_model():
 
-    # Enable mixed precision with proper policy
+    # Enable mixed precision for faster training
     if Config.MIXED_PRECISION:
-        policy = tf.keras.mixed_precision.Policy('mixed_float16')
-        tf.keras.mixed_precision.set_global_policy(policy)
+        tf.keras.mixed_precision.set_global_policy('mixed_float16')
     
     # Load data and model
     train_generator, validation_generator, _ = load_data()
@@ -35,37 +34,36 @@ def train_model():
                 tf.keras.metrics.AUC(name='auc'),
                 tf.keras.metrics.Precision(name='precision'),
                 tf.keras.metrics.Recall(name='recall'),
-                tf.keras.metrics.F1Score(name='f1')]
+                tf.keras.metrics.F1Score(average='macro', name='f1_macro')]
     )
     
-    # Enhanced callbacks
+    # Enhanced callbacks with proper metric monitoring
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_f1',
+            monitor='val_f1_macro',
             patience=Config.EARLY_STOPPING_PATIENCE,
             restore_best_weights=True,
             mode='max',
             verbose=1
         ),
         tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='val_f1',
+            monitor='val_f1_macro',
             factor=Config.REDUCE_LR_FACTOR,
             patience=Config.REDUCE_LR_PATIENCE,
             min_lr=1e-8,
             mode='max',
             verbose=1
         ),
-        # Save the entire model
         tf.keras.callbacks.ModelCheckpoint(
             filepath=Dir.MODEL_SAVE_PATH,
-            monitor='val_f1',
+            monitor='val_f1_macro',
             save_best_only=True,
             mode='max',
             verbose=1
         )
     ]
     
-    # Train with optimized parameters 
+    # Train with optimized parameters
     history = model.fit(
         train_generator,
         epochs=Config.EPOCHS,
