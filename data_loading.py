@@ -12,14 +12,28 @@ def load_data():
             validation_split=Config.VALIDATION_SPLIT if subset else None,
             subset=subset,
             seed=42
-        ).map(lambda x, y: (tf.keras.applications.resnet50.preprocess_input(x), y),
-              num_parallel_calls=tf.data.AUTOTUNE)
+        )
+        
+        # Convert labels to one-hot encoding
+        def one_hot(image, label):
+            return image, tf.one_hot(label, Config.NUM_CLASSES)
+            
+        # Preprocess images and convert labels to one-hot
+        ds = ds.map(
+            lambda x, y: (tf.keras.applications.resnet50.preprocess_input(x), y),
+            num_parallel_calls=tf.data.AUTOTUNE
+        ).map(one_hot, num_parallel_calls=tf.data.AUTOTUNE)
         
         if augment:
+            # Data augmentation using available functions
             ds = ds.map(lambda x, y: (tf.image.random_flip_left_right(x), y), 
-                        num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_rotation(x, 0.3), y), 
-                        num_parallel_calls=tf.data.AUTOTUNE)
+                       num_parallel_calls=tf.data.AUTOTUNE)
+            ds = ds.map(lambda x, y: (tf.image.random_flip_up_down(x), y), 
+                       num_parallel_calls=tf.data.AUTOTUNE)
+            ds = ds.map(lambda x, y: (tf.image.random_brightness(x, 0.2), y), 
+                       num_parallel_calls=tf.data.AUTOTUNE)
+            ds = ds.map(lambda x, y: (tf.image.random_contrast(x, 0.8, 1.2), y), 
+                       num_parallel_calls=tf.data.AUTOTUNE)
         
         return ds.prefetch(tf.data.AUTOTUNE).cache()
 
