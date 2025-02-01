@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from dir import Dir
 from sklearn.metrics import confusion_matrix, classification_report
-import numpy as np
 
 def plot_training_history(history, save_path):
     # Create directory if it doesn't exist
