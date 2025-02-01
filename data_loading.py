@@ -3,18 +3,19 @@ from dir import Dir
 import tensorflow as tf
 
 def load_data():
-    # Data augmentation for training
+    # Enhanced data augmentation for training
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
-        validation_split=0.2,  
-        rotation_range=30,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
+        validation_split=0.2,
+        rotation_range=40,        # Increased rotation
+        width_shift_range=0.3,    # Increased shift
+        height_shift_range=0.3,
         shear_range=0.2,
-        zoom_range=0.2,
+        zoom_range=0.3,          # Increased zoom
         horizontal_flip=True,
-        fill_mode='nearest',
-        brightness_range=[0.8,1.2]
+        vertical_flip=True,      # Added vertical flip
+        brightness_range=[0.7,1.3],  # Increased brightness range
+        preprocessing_function=tf.keras.applications.resnet50.preprocess_input
     )
 
     # Load training and validation data
