@@ -18,9 +18,10 @@ def focal_loss(gamma=2., alpha=.25):
 
 def train_model():
 
-    # Enable mixed precision for faster training
+    # Enable mixed precision with proper policy
     if Config.MIXED_PRECISION:
-        tf.keras.mixed_precision.set_global_policy('mixed_float16')
+        policy = tf.keras.mixed_precision.Policy('mixed_float16')
+        tf.keras.mixed_precision.set_global_policy(policy)
     
     # Load data and model
     train_generator, validation_generator, _ = load_data()
@@ -70,9 +71,7 @@ def train_model():
         epochs=Config.EPOCHS,
         validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=Config.CLASS_WEIGHTS,
-        workers=Config.NUM_WORKERS,
-        use_multiprocessing=Config.USE_MULTIPROCESSING
+        class_weight=Config.CLASS_WEIGHTS
     )
 
     # Save training plots
