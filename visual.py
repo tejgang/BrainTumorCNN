@@ -52,16 +52,26 @@ def generate_confusion_matrix(y_true, y_pred, save_path):
     
     # Plot
     plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt='d',
+    sns.heatmap(cm, 
+                annot=True, 
+                fmt='d',
                 xticklabels=class_names,
-                yticklabels=class_names)
-    plt.title('Confusion Matrix')
+                yticklabels=class_names,
+                cmap='YlOrRd',  # Softer color palette
+                cbar_kws={'label': 'Number of Predictions'},
+                annot_kws={'size': 12},
+                square=True)
+    
+    plt.title('Confusion Matrix', pad=20)
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
     
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout()
+    
     # Save
     try:
-        plt.savefig(save_path)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Confusion matrix saved to: {save_path}")
     except Exception as e:
         print(f"Error saving confusion matrix: {e}")
