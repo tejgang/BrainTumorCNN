@@ -30,9 +30,9 @@ def load_data():
                        num_parallel_calls=tf.data.AUTOTUNE)
             ds = ds.map(lambda x, y: (tf.image.random_flip_up_down(x), y), 
                        num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_brightness(x, 0.2), y), 
+            ds = ds.map(lambda x, y: (tf.image.random_brightness(x, 0.1), y), 
                        num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_contrast(x, 0.8, 1.2), y), 
+            ds = ds.map(lambda x, y: (tf.image.random_contrast(x, 0.9, 1.1), y), 
                        num_parallel_calls=tf.data.AUTOTUNE)
         
         return ds.prefetch(tf.data.AUTOTUNE).cache()

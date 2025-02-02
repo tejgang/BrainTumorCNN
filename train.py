@@ -22,8 +22,6 @@ def focal_loss(gamma=2., alpha=.25):
 
 def train_model():
 
-
-    tf.profiler.experimental.start('logdir')
     # Enable XLA compilation
     tf.config.optimizer.set_jit(True)
     # Enable mixed precision training for better memory efficiency and speed
@@ -88,8 +86,6 @@ def train_model():
 
     # Visualize and save training progress
     plot_training_history(history, Dir.PLOT_SAVE_PATH)
-
-    tf.profiler.experimental.stop()
 
 if __name__ == "__main__":
     train_model()

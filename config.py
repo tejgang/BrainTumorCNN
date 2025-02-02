@@ -2,7 +2,7 @@ class Config:
     # Model training parameters
     IMAGE_SIZE = (224, 224)  
     BATCH_SIZE = 64         
-    EPOCHS = 30           
+    EPOCHS = 50           
     LEARNING_RATE = 2e-5    
     NUM_CLASSES = 4
     
@@ -25,8 +25,8 @@ class Config:
     TEST_SPLIT = 0.1
     
     # Model parameters
-    DROPOUT_RATE = 0.65           
-    L2_LAMBDA = 0.002           
+    DROPOUT_RATE = 0.5           
+    L2_LAMBDA = 0.001           
     
     # Performance optimization
     MIXED_PRECISION = True
