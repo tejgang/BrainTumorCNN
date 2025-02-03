@@ -1,8 +1,8 @@
 class Config:
     # Model training parameters
-    IMAGE_SIZE = (224, 224)  
-    BATCH_SIZE = 64         
-    EPOCHS = 50           
+    IMAGE_SIZE = (256, 256)  
+    BATCH_SIZE = 32         
+    EPOCHS = 30           
     LEARNING_RATE = 2e-5    
     NUM_CLASSES = 4
     
@@ -30,9 +30,6 @@ class Config:
     
     # Performance optimization
     MIXED_PRECISION = True
-    USE_MULTIPROCESSING = True
-    MAX_QUEUE_SIZE = 20
-    NUM_WORKERS = 8
     
    
     

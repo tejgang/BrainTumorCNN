@@ -50,29 +50,32 @@ def train_model():
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_f1_macro', 
+            monitor='val_auc', 
             patience=Config.EARLY_STOPPING_PATIENCE,  
             restore_best_weights=True,  
             mode='max',  
             verbose=1
         ),
+
         # Learning Rate Reduction: Adapts learning rate when training plateaus
         tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='val_f1_macro',
+            monitor='val_auc',
             factor=Config.REDUCE_LR_FACTOR,  
             patience=Config.REDUCE_LR_PATIENCE,  
             min_lr=1e-8,  
             mode='max',
             verbose=1
+
         ),
         # Model Checkpointing: Saves best model during training
         tf.keras.callbacks.ModelCheckpoint(
             filepath=Dir.MODEL_SAVE_PATH,
-            monitor='val_f1_macro',
+            monitor='val_auc',
             save_best_only=True,  
             mode='max',
             verbose=1
         )
+
     ]
     
     # Train the model with optimized parameters
