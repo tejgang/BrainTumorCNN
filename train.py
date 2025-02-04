@@ -9,6 +9,7 @@ import tensorflow as tf
 # gamma: Focusing parameter that reduces the loss contribution from easy examples
 # alpha: Weighting factor for rare classes
 def focal_loss(gamma=2., alpha=.25):
+
     def focal_loss_fixed(y_true, y_pred):
         # Calculate pt_1 where predictions match ground truth
         # For positive samples (y_true=1), pt_1 = predicted prob
@@ -18,6 +19,7 @@ def focal_loss(gamma=2., alpha=.25):
         # Focal loss formula: -α(1-pt)ᵧ log(pt)
         # This reduces the impact of well-classified examples and focuses on hard ones
         return -tf.reduce_mean(alpha * tf.pow(1. - pt_1, gamma) * tf.math.log(pt_1 + tf.keras.backend.epsilon()))
+    
     return focal_loss_fixed
 
 def train_model():
