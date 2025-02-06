@@ -1,6 +1,6 @@
 class Config:
     # Model training parameters
-    IMAGE_SIZE = (256, 256)  
+    IMAGE_SIZE = (150, 150)  
     BATCH_SIZE = 32         
     EPOCHS = 30           
     LEARNING_RATE = 2e-5    
