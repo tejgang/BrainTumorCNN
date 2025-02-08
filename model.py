@@ -1,6 +1,8 @@
 import tensorflow as tf
 from config import Config
 
+
+'''
 class AttentionBlock(tf.keras.layers.Layer):
     """
     Squeeze-and-Excitation Attention mechanism for feature refinement.
@@ -98,3 +100,33 @@ def build_model():
         tf.keras.mixed_precision.set_global_policy('mixed_float16')
         
     return model
+'''
+
+import tensorflow as tf
+from config import Config
+
+def build_model() -> tf.keras.Model:
+    """Build optimized CNN model using config parameters"""
+    inputs = tf.keras.Input(shape=(*Config.Training.IMAGE_SIZE, 3))
+    
+    x = inputs
+    for filters in Config.Model.CONV_FILTERS:
+        x = tf.keras.layers.Conv2D(
+            filters, 3, padding='same',
+            kernel_regularizer=tf.keras.regularizers.l2(Config.Model.L2_LAMBDA))(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.ReLU()(x)
+        x = tf.keras.layers.MaxPooling2D(2)(x)
+    
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Dense(
+        Config.Model.DENSE_UNITS, 
+        activation='relu',
+        kernel_regularizer=tf.keras.regularizers.l2(Config.Model.L2_LAMBDA))(x)
+    x = tf.keras.layers.Dropout(Config.Model.DROPOUT_RATE)(x)
+     
+    outputs = tf.keras.layers.Dense(
+        Config.Training.NUM_CLASSES, 
+        activation='softmax')(x)
+    
+    return tf.keras.Model(inputs, outputs)

@@ -1,91 +1,41 @@
+import tensorflow as tf
+from typing import Tuple
 from config import Config
 from dir import Dir
-import tensorflow as tf
+
+def apply_augmentation(image: tf.Tensor, label: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
+    """Applies random augmentations to image"""
+    image = tf.image.random_flip_left_right(image)
+    image = tf.image.random_brightness(image, 0.2)
+    image = tf.image.random_contrast(image, 0.8, 1.2)
+    return tf.clip_by_value(image, 0.0, 1.0), label
+
+def preprocess(image: tf.Tensor, label: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
+    """Standard preprocessing pipeline"""
+    return (tf.cast(image, tf.float32) / 255.0, 
+            tf.one_hot(label, Config.Training.NUM_CLASSES))
+
+def create_dataset(data_dir: str, subset: str = None, do_augment: bool = False) -> tf.data.Dataset:
+    """Create optimized dataset pipeline"""
+    ds = tf.keras.utils.image_dataset_from_directory(
+        data_dir,
+        subset=subset,
+        validation_split=Config.Training.VALIDATION_SPLIT if subset else None,
+        seed=Config.Optimization.SEED,
+        image_size=Config.Training.IMAGE_SIZE,
+        batch_size=Config.Training.BATCH_SIZE
+    )
+    
+    ds = ds.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)
+    if do_augment:
+        ds = ds.map(apply_augmentation, num_parallel_calls=tf.data.AUTOTUNE)
+        
+    return ds.prefetch(tf.data.AUTOTUNE)
 
 def load_data():
-
-    def _load_dataset(directory, subset=None, augment=False):
-        ds = tf.keras.utils.image_dataset_from_directory(
-            directory,
-            image_size=Config.IMAGE_SIZE,
-            batch_size=Config.BATCH_SIZE,
-            validation_split=Config.VALIDATION_SPLIT if subset else None,
-            subset=subset,
-            seed=42
-        )
-        
-        # Convert labels to one-hot encoding
-        def one_hot(image, label):
-            return image, tf.one_hot(label, Config.NUM_CLASSES)
-            
-        # Preprocess images and convert labels to one-hot
-        ds = ds.map(
-            lambda x, y: (tf.keras.applications.resnet50.preprocess_input(x), y),
-            num_parallel_calls=tf.data.AUTOTUNE
-        ).map(one_hot, num_parallel_calls=tf.data.AUTOTUNE)
-        
-        if augment:
-            # Data augmentation using available functions
-            ds = ds.map(lambda x, y: (tf.image.random_flip_left_right(x), y), 
-                       num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_flip_up_down(x), y), 
-                       num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_brightness(x, 0.1), y), 
-                       num_parallel_calls=tf.data.AUTOTUNE)
-            ds = ds.map(lambda x, y: (tf.image.random_contrast(x, 0.9, 1.1), y), 
-                       num_parallel_calls=tf.data.AUTOTUNE)
-        
-        return ds.prefetch(tf.data.AUTOTUNE).cache()
-
-    train_ds = _load_dataset(Dir.TRAIN_DIR, subset='training', augment=True)
-    val_ds = _load_dataset(Dir.TRAIN_DIR, subset='validation')
-    test_ds = _load_dataset(Dir.TEST_DIR)
-    
-    return train_ds, val_ds, test_ds
-    '''
-    
-    # Enhanced data augmentation for training
-    train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-        rescale=1./255,
-        validation_split=0.2,
-        rotation_range=40,        
-        width_shift_range=0.3,    
-        height_shift_range=0.3,
-        shear_range=0.2,
-        zoom_range=0.3,          
-        horizontal_flip=True,
-        vertical_flip=True,      
-        brightness_range=[0.7,1.3],  
-        preprocessing_function=tf.keras.applications.resnet50.preprocess_input
+    """Load all datasets with proper configurations"""
+    return (
+        create_dataset(Dir.TRAIN_DIR, 'training', do_augment=True),
+        create_dataset(Dir.TRAIN_DIR, 'validation'),
+        create_dataset(Dir.TEST_DIR)
     )
-
-    # Load training and validation data
-    train_generator = train_datagen.flow_from_directory(
-        Dir.TRAIN_DIR,
-        target_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        class_mode='categorical',
-        subset='training'
-    )
-
-    validation_generator = train_datagen.flow_from_directory(
-        Dir.TRAIN_DIR,
-        target_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        class_mode='categorical',
-        subset='validation'
-    )
-
-    # Test data (no augmentation)
-    test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
-
-    test_generator = test_datagen.flow_from_directory(
-        Dir.TEST_DIR,
-        target_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        class_mode='categorical',
-        shuffle=False
-    )
-
-    return train_generator, validation_generator, test_generator
-    '''
