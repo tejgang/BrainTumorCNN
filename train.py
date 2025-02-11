@@ -5,88 +5,46 @@ from config import Config
 from dir import Dir
 import tensorflow as tf
 
-# Focal Loss implementation for handling class imbalance
-# gamma: Focusing parameter that reduces the loss contribution from easy examples
-# alpha: Weighting factor for rare classes
-def focal_loss(gamma=2., alpha=.25):
-
-    def focal_loss_fixed(y_true, y_pred):
-        # Calculate pt_1 where predictions match ground truth
-        # For positive samples (y_true=1), pt_1 = predicted prob
-        # For negative samples (y_true=0), pt_1 = 1
-        pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
-        
-        # Focal loss formula: -α(1-pt)ᵧ log(pt)
-        # This reduces the impact of well-classified examples and focuses on hard ones
-        return -tf.reduce_mean(alpha * tf.pow(1. - pt_1, gamma) * tf.math.log(pt_1 + tf.keras.backend.epsilon()))
-    
-    return focal_loss_fixed
 
 def train_model():
-
-    # Enable XLA compilation
-    tf.config.optimizer.set_jit(True)
-    # Enable mixed precision training for better memory efficiency and speed
-    # Uses float16 for certain operations while maintaining float32 for critical ones
-    if Config.MIXED_PRECISION:
-        tf.keras.mixed_precision.set_global_policy('mixed_float16')
+    # Load data
+    train_ds, val_ds, _ = load_data()
     
-    # Initialize data generators and model architecture
-    train_generator, validation_generator, _ = load_data()
+    # Build model
     model = build_model()
     
     # Model compilation with optimized settings
     model.compile(
-        # Adam optimizer with configurable learning rate
-        optimizer=tf.keras.optimizers.Adam(learning_rate=Config.LEARNING_RATE),
-        # Focal loss for handling class imbalance
-        loss=focal_loss(gamma=2.0),
-        # Multiple metrics for comprehensive model evaluation
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+        loss='sparse_categorical_crossentropy',
         metrics=['accuracy', tf.keras.metrics.AUC(name='auc'), 
                  tf.keras.metrics.F1Score(average='macro', name='f1_macro')]
     )
     
-
-
-    # Training callbacks for optimization and monitoring
+    # Callbacks
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_auc', 
-            patience=Config.EARLY_STOPPING_PATIENCE,  
-            restore_best_weights=True,  
-            mode='max',  
-            verbose=1
+            monitor='val_loss',
+            patience=5,
+            restore_best_weights=True
         ),
 
         # Learning Rate Reduction: Adapts learning rate when training plateaus
         tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='val_auc',
-            factor=Config.REDUCE_LR_FACTOR,  
-            patience=Config.REDUCE_LR_PATIENCE,  
-            min_lr=1e-8,  
-            mode='max',
-            verbose=1
-
-        ),
-        # Model Checkpointing: Saves best model during training
-        tf.keras.callbacks.ModelCheckpoint(
-            filepath=Dir.MODEL_SAVE_PATH,
-            monitor='val_auc',
-            save_best_only=True,  
-            mode='max',
-            verbose=1
+            monitor='val_loss',
+            factor=0.2,
+            patience=3
         )
-
     ]
     
-    # Train the model with optimized parameters
+    # Train model
     history = model.fit(
-        train_generator,
+        train_ds,
+        validation_data=val_ds,
         epochs=Config.EPOCHS,
-        validation_data=validation_generator,
         callbacks=callbacks,
-        class_weight=Config.CLASS_WEIGHTS  
+
     )
 
     # Visualize and save training progress

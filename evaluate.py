@@ -9,11 +9,7 @@ def evaluate_model():
     # Load data and model
     _, _, test_ds = load_data()
     
-    # Load model with custom loss
-    custom_objects = {
-        'focal_loss_fixed': focal_loss()
-    }
-    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH, custom_objects=custom_objects)
+    model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
     
     print("Starting evaluation...")
     
