@@ -18,7 +18,8 @@ def load_data():
         subset="training",
         seed=Config.SEED,
         image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE
+        batch_size=Config.BATCH_SIZE,
+        label_mode='categorical'
     )
     
     # Load validation data
@@ -28,14 +29,16 @@ def load_data():
         subset="validation",
         seed=Config.SEED,
         image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE
+        batch_size=Config.BATCH_SIZE,
+        label_mode='categorical'
     )
     
     # Load test data
     test_ds = tf.keras.utils.image_dataset_from_directory(
         Dir.TEST_DIR,
         image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE
+        batch_size=Config.BATCH_SIZE,
+        label_mode='categorical'
     )
     
     # Configure datasets for performance

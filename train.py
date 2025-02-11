@@ -16,7 +16,7 @@ def train_model():
     # Model compilation with optimized settings
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
-        loss='sparse_categorical_crossentropy',
+        loss='categorical_crossentropy',
         metrics=['accuracy', tf.keras.metrics.AUC(name='auc'), 
                  tf.keras.metrics.F1Score(average='macro', name='f1_macro')]
     )
@@ -25,14 +25,14 @@ def train_model():
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_loss',
+            monitor='val_auc',
             patience=5,
             restore_best_weights=True
         ),
 
         # Learning Rate Reduction: Adapts learning rate when training plateaus
         tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='val_loss',
+            monitor='val_auc',
             factor=0.2,
             patience=3
         )
