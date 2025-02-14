@@ -8,8 +8,7 @@ class Config:
     BATCH_SIZE = 32         
     EPOCHS = 40
     NUM_CLASSES = 4
-    SEED = 42  
-    LEARNING_RATE = 0.0005  
+    SEED = 42
 
     # Set all random seeds for reproducibility
     @staticmethod
