@@ -57,15 +57,15 @@ During training, the model learns to classify images by minimizing the categoric
 
 Training and validation accuracy/loss curves were plotted to visualize the learning process and detect any signs of overfitting or underfitting, as seen below:
 
+![Training Plots](Training_Plots/training_history.png)
 
-
-The model achieved steady improvements in accuracy across epochs, with validation accuracy closely following training accuracy, indicating good generalization. Additionally, training loss decreases consistently, while validation loss plateaus and fluctuates slightly, which is typical when the model reaches optimal performance. An evaluation of this model can be seen below:
-
-
+The model achieved steady improvements in accuracy across epochs, with validation accuracy closely following training accuracy, indicating good generalization. Additionally, training loss decreases consistently, while validation loss plateaus and fluctuates slightly, which is typical when the model reaches optimal performance.
 
 ## Evaluation and Final Results
 
-Model evaluation is performed using the test dataset, which contains unseen data. Metrics such as **accuracy, precision, recall, and F1-score** are used to assess performance. A confusion matrix provides a detailed breakdown of a model's predictions for each class, highlighting areas of strength and weakness.
+Model evaluation is performed using the test dataset, which contains unseen data. Metrics such as **accuracy, precision, recall, and F1-score** are used to assess performance. A confusion matrix provides a detailed breakdown of a model's predictions for each class, highlighting areas of strength and weakness. An evaluation of this model can be seen below:
+
+![Confusion_Matrix](Confusion_Matrix/confusion_matrix.png)
 
 There was high accuracy when identifying **No Tumor** and **Pituitary tumors**; however, a few misclassifications were observed between **Glioma** and **Meningioma**, which may indicate overlapping features.
 
