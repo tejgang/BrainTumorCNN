@@ -8,43 +8,53 @@ import tensorflow as tf
 
 def train_model():
     # Load data
-    train_ds, val_ds, _ = load_data()
+    train_generator, test_generator = load_data()
     
     # Build model
     model = build_model()
     
     # Model compilation with optimized settings
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, beta_1=0.869, beta_2=0.995),
         loss='categorical_crossentropy',
-        metrics=['accuracy', tf.keras.metrics.AUC(name='auc'), 
-                 tf.keras.metrics.F1Score(average='macro', name='f1_macro')]
+        metrics=['accuracy', tf.keras.metrics.AUC(name='auc')]
     )
     
     # Callbacks
     callbacks = [
         # Early Stopping: Prevents overfitting by monitoring validation metrics
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_auc',
+            monitor='val_loss',
+            min_delta=1e-9,
             patience=5,
-            restore_best_weights=True
+            verbose=1
         ),
 
         # Learning Rate Reduction: Adapts learning rate when training plateaus
         tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='val_auc',
-            factor=0.2,
-            patience=3
+            monitor='val_loss',
+            factor=0.3,
+            patience=5,
+            verbose=1,
+    
+        ),
+
+        # Add ModelCheckpoint callback
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath=Dir.MODEL_SAVE_PATH,
+            monitor='val_loss',
+            save_best_only=True,
+            mode='max',
+            verbose=1
         )
     ]
     
     # Train model
     history = model.fit(
-        train_ds,
-        validation_data=val_ds,
+        train_generator,
+        validation_data=test_generator,
         epochs=Config.EPOCHS,
-        callbacks=callbacks,
-
+        callbacks=callbacks
     )
 
     # Visualize and save training progress

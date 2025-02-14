@@ -4,53 +4,37 @@ import tensorflow as tf
 
 
 def load_data():
-    # Data augmentation
-    data_augmentation = tf.keras.Sequential([
-        tf.keras.layers.RandomFlip("horizontal"),
-        tf.keras.layers.RandomRotation(0.2),
-        tf.keras.layers.RandomZoom(0.2),
-    ])
-    
-    # Load training data
-    train_ds = tf.keras.utils.image_dataset_from_directory(
-        Dir.TRAIN_DIR,
-        validation_split=0.2,
-        subset="training",
-        seed=Config.SEED,
-        image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        label_mode='categorical'
-    )
-    
-    # Load validation data
-    val_ds = tf.keras.utils.image_dataset_from_directory(
-        Dir.TRAIN_DIR,
-        validation_split=0.2,
-        subset="validation",
-        seed=Config.SEED,
-        image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        label_mode='categorical'
-    )
-    
-    # Load test data
-    test_ds = tf.keras.utils.image_dataset_from_directory(
-        Dir.TEST_DIR,
-        image_size=Config.IMAGE_SIZE,
-        batch_size=Config.BATCH_SIZE,
-        label_mode='categorical'
-    )
-    
-    # Configure datasets for performance
-    AUTOTUNE = tf.data.AUTOTUNE
-    
-    train_ds = train_ds.map(
-        lambda x, y: (data_augmentation(x, training=True), y),
-        num_parallel_calls=AUTOTUNE
-    ).prefetch(AUTOTUNE)
-    
-    val_ds = val_ds.prefetch(AUTOTUNE).cache()
-    test_ds = test_ds.prefetch(AUTOTUNE).cache()
-    
-    return train_ds, val_ds, test_ds
+   
+   # Data Augmentation
+   train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255,
+                                   rotation_range=10,
+                                   brightness_range=(0.85, 1.15),
+                                   width_shift_range=0.002,
+                                   height_shift_range=0.002,
+                                   shear_range=12.5,
+                                   zoom_range=0,
+                                   horizontal_flip=True,
+                                   vertical_flip=False,
+                                   fill_mode="nearest")
+
+
+# applying the generator to training data with constant seed
+   train_generator = train_datagen.flow_from_directory(Dir.TRAIN_DIR,
+                                                    target_size=Config.IMAGE_SIZE,
+                                                    batch_size=Config.BATCH_SIZE,
+                                                    class_mode="categorical",
+                                                    seed=Config.SEED)
+
+# No augmentation of the test data, just rescaling
+   test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+
+# applying the generator to testing data with constant seed
+   test_generator = test_datagen.flow_from_directory(Dir.TEST_DIR,
+                                                  target_size=Config.IMAGE_SIZE,
+                                                  batch_size=Config.BATCH_SIZE,
+                                                  class_mode="categorical",
+                                                  shuffle=False,
+                                                  seed=Config.SEED)
+   
+   return train_generator, test_generator
     
