@@ -5,6 +5,8 @@ class Config:
     EPOCHS = 40
     NUM_CLASSES = 4
     SEED = 111
+    LEARNING_RATE = 0.0005  
+
     
     
     
