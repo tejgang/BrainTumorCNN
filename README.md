@@ -1,2 +1,2 @@
-# Brain Tumor Classification using CNN
-This program is a Convolutional Neural Network (CNN) designed for classifying brain tumors.
+
+[BrainReadMe.pdf](https://github.com/user-attachments/files/18795637/BrainReadMe.pdf)
