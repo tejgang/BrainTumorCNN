@@ -4,17 +4,19 @@ import tensorflow as tf
 
 
 def load_data():
+    
     def preprocess_image(image, label):
+        
         # Convert to float32 and normalize
         image = tf.cast(image, tf.float32) / 255.0
         
         # Resize if needed
         image = tf.image.resize(image, Config.IMAGE_SIZE)
         
-        # Data augmentation (only for training)
         return image, label
 
     def configure_for_performance(dataset, is_training=False):
+        
         # Cache the dataset in memory
         dataset = dataset.cache()
         
@@ -69,7 +71,7 @@ def load_data():
         label_mode='categorical'
     )
 
-    # Apply preprocessing and performance optimizations
+    # Apply preprocessing
     train_ds = train_ds.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
     val_ds = val_ds.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
     test_ds = test_ds.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)

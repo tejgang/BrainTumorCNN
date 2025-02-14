@@ -7,13 +7,14 @@ import tensorflow as tf
 
 
 def train_model():
+    
     # Load data
     train_ds, val_ds, _ = load_data()
     
     # Build model
     model = build_model()
     
-    # Model compilation with optimized settings
+    # Model compilation 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(
             learning_rate=0.0005,

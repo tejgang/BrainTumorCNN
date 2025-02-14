@@ -5,6 +5,7 @@ from dir import Dir
 from visual import generate_confusion_matrix
 
 def evaluate_model():
+    
     # Load data and model
     _, _, test_ds = load_data()
     model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)

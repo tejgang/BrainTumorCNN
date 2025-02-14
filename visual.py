@@ -33,14 +33,7 @@ def plot_training_history(history, save_path):
         plt.close()
 
 def generate_confusion_matrix(y_true, y_pred, save_path):
-    """
-    Generate and save confusion matrix
     
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        save_path: Path to save the confusion matrix plot
-    """
     # Create directory if it doesn't exist
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     
