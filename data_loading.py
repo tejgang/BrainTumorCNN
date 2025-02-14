@@ -40,14 +40,14 @@ def load_data():
 
    
 
-    # Load datasets using tf.data
+    # Load datasets 
     train_ds = tf.keras.utils.image_dataset_from_directory(
         Dir.TRAIN_DIR,
         validation_split=0.2,
         subset="training",
         seed=Config.SEED,
         image_size=Config.IMAGE_SIZE,
-        batch_size=None,  # Load unbatched
+        batch_size=None,  
         label_mode='categorical'
     )
 
@@ -57,7 +57,7 @@ def load_data():
         subset="validation",
         seed=Config.SEED,
         image_size=Config.IMAGE_SIZE,
-        batch_size=None,  # Load unbatched
+        batch_size=None, 
         label_mode='categorical'
     )
 
@@ -65,7 +65,7 @@ def load_data():
         Dir.TEST_DIR,
         seed=Config.SEED,
         image_size=Config.IMAGE_SIZE,
-        batch_size=None,  # Load unbatched
+        batch_size=None,  
         label_mode='categorical'
     )
 
