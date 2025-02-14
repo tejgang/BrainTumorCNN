@@ -6,33 +6,32 @@ from visual import generate_confusion_matrix
 
 def evaluate_model():
     # Load data and model
-    _, test_generator = load_data()
+    _, _, test_ds = load_data()
     model = tf.keras.models.load_model(Dir.MODEL_SAVE_PATH)
     
     print("Starting evaluation...")
     
-    # Get predictions
+    # Get predictions and true labels
     y_pred = []
     y_true = []
     
-    # Get the number of steps
-    steps = test_generator.samples // test_generator.batch_size
-    if test_generator.samples % test_generator.batch_size != 0:
-        steps += 1
+    # Iterate through the dataset
+    for images, labels in test_ds:
+        # Get predictions for this batch
+        predictions = model.predict(images, verbose=0)
+        # Convert predictions and labels to class indices
+        pred_indices = np.argmax(predictions, axis=1)
+        true_indices = np.argmax(labels, axis=1)
+        
+        y_pred.extend(pred_indices)
+        y_true.extend(true_indices)
     
-    print(f"Total evaluation steps: {steps}")
-    
-    # Use model.predict on the generator
-    predictions = model.predict(test_generator, steps=steps, verbose=1)
-    y_pred = np.argmax(predictions, axis=1)
-    
-    # Get true labels
-    y_true = test_generator.classes[:len(y_pred)]
+    y_pred = np.array(y_pred)
+    y_true = np.array(y_true)
     
     # Evaluate model
     print("\nCalculating metrics...")
-    test_generator.reset()
-    metrics = model.evaluate(test_generator, steps=steps, verbose=1)
+    metrics = model.evaluate(test_ds, verbose=1)
     
     # Print all metrics
     metric_names = ['loss', 'accuracy', 'auc']
