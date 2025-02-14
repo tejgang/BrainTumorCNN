@@ -53,16 +53,6 @@ saved_models/model.h5
 *.pkl
 *.pth
 
-# Data and results
-data/
-Training_plots/
-Confusion_Matrix/
-*.png
-*.jpg
-*.jpeg
-*.csv
-*.json
-
 # Logs
 logs/
 *.log
