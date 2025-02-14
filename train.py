@@ -30,7 +30,7 @@ def train_model():
         tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
             min_delta=1e-4,
-            patience=10,     
+            patience=5,     
             verbose=1,
             restore_best_weights=True 
         ),
